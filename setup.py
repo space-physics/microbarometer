@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-install_requires = ['obspy','cartopy']
+install_requires = ['obspy','cartopy','pandas']
 tests_require = ['nose','coveralls']
 # %%
 from setuptools import setup,find_packages
@@ -23,6 +23,6 @@ setup(name='pymicrobarometer',
       tests_require=tests_require,
       extras_require={'tests':tests_require,
                       'plot':['matplotlib']},
-      python_requires='>=3.6', 
+      python_requires='>=3.6',
 	  )
 

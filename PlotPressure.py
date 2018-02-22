@@ -1,8 +1,15 @@
 #!/usr/bin/env python
+"""
+1. .seed to .mseed: ./rdseed.rh6.linux_64 -f ~/data/microbarom/524602.seed -d -o 4
+2. read and plot: python PlotPressure.py ~/data/microbarom/524602.mseed
+
+"""
 from pathlib import Path
 from matplotlib.pyplot import figure, show
-import obspy
+import matplotlib.dates as md
 import cartopy
+import seaborn as sns
+#
 import pymicrobarometer as pmb
 
 GREF = cartopy.crs.PlateCarree()
@@ -20,27 +27,33 @@ cities = [#[-117.1625, 32.715, 'San Diego'],
           [ -106.6082622,35.0389316,'KABQ']]
 
 
-def plotmicrobarom(dat):
-    ax = figure().gca()
-    ax.plot(dat[0].times()[:10000],dat[0].data[:10000])
-    ax.set_xlabel(f'seconds elapsed since {dat[0].meta.starttime}')
+def plotmicrobarom(dat, showmap:bool):
+    t = pmb.t2dt(dat[0])
+
+    fg = figure()
+    ax = fg.gca()
+    ax.plot(t, dat[0])
+    ax.set_xlabel(f'UTC time: {t[0].date()}')
     ax.set_ylabel('int32 data numbers')
-    ax.set_title(f'station {dat[0].meta.network}-{dat[0].meta.station}')
+    ax.set_title(f'station {dat[0].meta.network}-{dat[0].meta.station}, $f_s$ = {dat[0].meta.sampling_rate} Hz')
+    ax.grid(True)
+    ax.xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
+    fg.autofmt_xdate()
+# %% Map
+    if showmap:
+        am = figure(figsize=(15,10)).gca(projection=GREF)
+        am.add_feature(cartopy.feature.COASTLINE, linewidth=0.5, linestyle=':')
+        am.add_feature(cartopy.feature.NaturalEarthFeature('cultural', 'admin_1_states_provinces',
+                                      '50m',
+                                      linestyle=':',linewidth=0.5, edgecolor='grey', facecolor='none'))
 
+        for k,l in loc.items():
+            am.plot(l[0], l[1], 'bo', markersize=7, transform=GREF)
+            am.annotate(k, xy = (l[0], l[1]), xytext = (3, 3), textcoords = 'offset points')
 
-    am = figure(figsize=(15,10)).gca(projection=GREF)
-    am.add_feature(cartopy.feature.COASTLINE, linewidth=0.5, linestyle=':')
-    am.add_feature(cartopy.feature.NaturalEarthFeature('cultural', 'admin_1_states_provinces',
-                                  '50m',
-                                  linestyle=':',linewidth=0.5, edgecolor='grey', facecolor='none'))
-
-    for k,l in loc.items():
-        am.plot(l[0], l[1], 'bo', markersize=7, transform=GREF)
-        am.annotate(k, xy = (l[0], l[1]), xytext = (3, 3), textcoords = 'offset points')
-
-    for c in cities:
-        am.plot(c[0], c[1], 'bo', markersize=7, transform=GREF)
-        am.annotate(c[2], xy = (c[0], c[1]), xytext = (3, 3), textcoords = 'offset points')
+        for c in cities:
+            am.plot(c[0], c[1], 'bo', markersize=7, transform=GREF)
+            am.annotate(c[2], xy = (c[0], c[1]), xytext = (3, 3), textcoords = 'offset points')
 
 
 if __name__ == '__main__':
@@ -48,6 +61,7 @@ if __name__ == '__main__':
     p = ArgumentParser()
     p.add_argument('datadir',help='directory where SEED data files are (or filename)')
     p.add_argument('-ext',help='file suffix of data',default='.SAC')
+    p.add_argument('-nomap',help='do not show map',action='store_true')
     p = p.parse_args()
 
     if isinstance(p.datadir,(str,Path)):
@@ -65,12 +79,12 @@ if __name__ == '__main__':
     for f in flist:
         if f.suffix.endswith('ASC'):
             dat = pmb.readasc(f)
-        elif f.suffix in ('.SAC','.seed'):
+        elif f.suffix in ('.SAC','.seed','.mseed'):
             dat = pmb.readseed(f)
 
     print(dat)
     #print(dat[0].stats)
     print(f'shape of data in {f}',dat[0].count(),'from',dat[0].meta.starttime,'to',dat[0].meta.endtime)
 
-    plotmicrobarom(dat)
+    plotmicrobarom(dat, not p.nomap)
     show()
