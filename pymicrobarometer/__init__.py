@@ -24,4 +24,7 @@ def readseed(datadir:Path, ext:str):
 
     dat = []
     for f in flist:
-        dat.append(obspy.read(fn))
+        try:
+            dat.append(obspy.read(str(f)))
+        except Exception as e:
+            print(f,e)
