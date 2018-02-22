@@ -8,6 +8,7 @@ from pathlib import Path
 from matplotlib.pyplot import figure, show
 import matplotlib.dates as md
 import cartopy
+from datetime import timedelta
 import seaborn as sns
 #
 import pymicrobarometer as pmb
@@ -28,16 +29,25 @@ cities = [#[-117.1625, 32.715, 'San Diego'],
 
 
 def plotmicrobarom(dat, showmap:bool):
-    t = pmb.t2dt(dat[0])
+    t = pmb.t2dt(dat)
 
     fg = figure()
     ax = fg.gca()
-    ax.plot(t, dat[0])
-    ax.set_xlabel(f'UTC time: {t[0].date()}')
+    ax.plot(t, dat)
     ax.set_ylabel('int32 data numbers')
-    ax.set_title(f'station {dat[0].meta.network}-{dat[0].meta.station}, $f_s$ = {dat[0].meta.sampling_rate} Hz')
+    ax.set_title(f'station {dat.meta.network}-{dat.meta.station}, $f_s$ = {dat.meta.sampling_rate} Hz')
     ax.grid(True)
-    ax.xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
+
+    if t[-1] - t[0] > timedelta(days=1):
+        fmt = None
+        ss= ''
+    else:
+        fmt = md.DateFormatter('%H:%M')
+        ss = t[0].date()
+
+    ax.set_xlabel(f'UTC time: {ss}')
+    if fmt is not None:
+        ax.xaxis.set_major_formatter(fmt)
     fg.autofmt_xdate()
 # %% Map
     if showmap:
@@ -60,6 +70,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser()
     p.add_argument('datadir',help='directory where SEED data files are (or filename)')
+    p.add_argument('-i','--ind',help='index of datastream',type=int,default=0)
     p.add_argument('-ext',help='file suffix of data',default='.SAC')
     p.add_argument('-nomap',help='do not show map',action='store_true')
     p = p.parse_args()
@@ -84,7 +95,7 @@ if __name__ == '__main__':
 
     print(dat)
     #print(dat[0].stats)
-    print(f'shape of data in {f}',dat[0].count(),'from',dat[0].meta.starttime,'to',dat[0].meta.endtime)
+    print(f'shape of data in {f}',dat[p.ind].count(),'from',dat[p.ind].meta.starttime,'to',dat[0].meta.endtime)
 
-    plotmicrobarom(dat, not p.nomap)
+    plotmicrobarom(dat[p.ind], not p.nomap)
     show()
