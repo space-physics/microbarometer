@@ -43,8 +43,6 @@ List time range of data with ``-t`` option::
     ./rdseed.rh6.linux_64 -f myfile.seed -t
 
 
-
-
 Read SEED headers (extensive metadata)::
 
     ./rdseed.rh6.linux_64 -f myfile.seed -s
