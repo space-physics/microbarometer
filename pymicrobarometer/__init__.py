@@ -5,13 +5,14 @@ import pandas
 
 def t2dt(dat):
     """convert SEED time to Python datetime"""
-    step = timedelta(seconds=dat.meta.sampling_rate)
+    step = timedelta(seconds=1/dat.meta.sampling_rate)
     t = datetimerange(dat.meta.starttime.datetime, dat.meta.endtime.datetime+step, step)
 
     return t
 
 
 def datetimerange(start:datetime, end:datetime, step:timedelta) -> list:
+    """like range() for datetime!"""
     assert isinstance(start, datetime)
     assert isinstance(end, datetime)
     assert isinstance(step, timedelta)
@@ -26,9 +27,9 @@ def readasc(fn:Path, Nrows:int=1000):
     return dat
 
 def readseed(fn:Path):
-    """read SEED format microbarometer data
+    """read mSEED format microbarometer data
 
-    datadir: path to SEED data or filename
+    fn: path to mSEED data
 
     https://docs.obspy.org/packages/obspy.io.mseed.html?highlight=mseed#module-obspy.io.mseed
     """
