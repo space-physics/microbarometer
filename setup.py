@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-install_requires = ['obspy']
+install_requires = ['obspy','cartopy']
 tests_require = ['nose','coveralls']
 # %%
 from setuptools import setup,find_packages
