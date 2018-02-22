@@ -10,7 +10,7 @@ def plotmicrobarom(dat,t):
     ax = figure().gca()
     ax.plot(dat[0].times()[:10000],dat[0].data[:10000])
     ax.set_xlabel(f'seconds elapsed since {t[0]}')
-    ax.set_ylabel('Pressure [relative]')
+    ax.set_ylabel('int32 data numbers')
 
 
 
