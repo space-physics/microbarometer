@@ -14,6 +14,7 @@ def readseed(fn:Path):
 
     datadir: path to SEED data or filename
 
+    https://docs.obspy.org/packages/obspy.io.mseed.html?highlight=mseed#module-obspy.io.mseed
     """
 
     return obspy.read(str(fn), debug_headers=True)
