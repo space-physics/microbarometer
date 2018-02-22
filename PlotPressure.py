@@ -16,8 +16,8 @@ import pymicrobarometer as pmb
 GREF = cartopy.crs.PlateCarree()
 
 # ./rdseed myfile.seed -s
-loc = {'TA-BGNE-BDO':(-98.150200, 41.408298, 573.000000),  # fs= 40 Hz
-       'IU-CCM-LDO':(-91.244598, 38.055698, 222.000000)}   # fs= 1 Hz
+loc = {'TA-BGNE-BDO':(-98.150200, 41.408298, 573.000000, 'Belgrade, Nebraska'),  # fs= 40 Hz
+       'IU-CCM-LDO':(-91.244598, 38.055698, 222.000000, 'Cathedral Cave, Missouri')}   # fs= 1 Hz
 
 cities = [#[-117.1625, 32.715, 'San Diego'],
           [-87.9073, 41.9742, 'KORD' ],
@@ -28,15 +28,16 @@ cities = [#[-117.1625, 32.715, 'San Diego'],
           [ -106.6082622,35.0389316,'KABQ']]
 
 
-def plotmicrobarom(dat, showmap:bool):
+def plotmicrobarom(dat, showmap:bool, yminmax:tuple=None):
     t = pmb.t2dt(dat)
 
     fg = figure()
     ax = fg.gca()
-    ax.plot(t, dat)
+    ax.plot(t, dat)#.filter('lowpass', freq=0.01))
     ax.set_ylabel('int32 data numbers')
     ax.set_title(f'station {dat.meta.network}-{dat.meta.station}, $f_s$ = {dat.meta.sampling_rate} Hz')
     ax.grid(True)
+    ax.set_ylim(yminmax)
 
     if t[-1] - t[0] > timedelta(days=1):
         fmt = None
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     p.add_argument('-i','--ind',help='index of datastream',type=int,default=0)
     p.add_argument('-ext',help='file suffix of data',default='.SAC')
     p.add_argument('-nomap',help='do not show map',action='store_true')
+    p.add_argument('-yminmax',help='vertical plot limits',nargs=2, type=float)
     p = p.parse_args()
 
     if isinstance(p.datadir,(str,Path)):
@@ -97,5 +99,6 @@ if __name__ == '__main__':
     #print(dat[0].stats)
     print(f'shape of data in {f}',dat[p.ind].count(),'from',dat[p.ind].meta.starttime,'to',dat[0].meta.endtime)
 
-    plotmicrobarom(dat[p.ind], not p.nomap)
+    plotmicrobarom(dat[p.ind], not p.nomap, yminmax=p.yminmax)
+
     show()
