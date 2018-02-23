@@ -26,7 +26,8 @@ def readasc(fn:Path, Nrows:int=1000):
 
     return dat
 
-def readseed(fn:Path):
+
+def readseed(fn:Path, tlim:tuple=None):
     """read mSEED format microbarometer data
 
     fn: path to mSEED data
@@ -34,4 +35,7 @@ def readseed(fn:Path):
     https://docs.obspy.org/packages/obspy.io.mseed.html?highlight=mseed#module-obspy.io.mseed
     """
 
-    return obspy.read(str(fn), debug_headers=True)
+    if tlim is None:
+        return obspy.read(str(fn))
+    else:
+        return obspy.read(str(fn), starttime=tlim[0], endtime=tlim[1])
