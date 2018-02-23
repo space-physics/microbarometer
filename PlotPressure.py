@@ -29,9 +29,11 @@ if __name__ == '__main__':
     p.add_argument('-yminmax',help='vertical plot limits', nargs=2, type=float)
     p.add_argument('-tlim',help='start and end time to load',nargs=2)
     p.add_argument('-flim',help='spectrogram freq plot limits',type=float,nargs=2)
+    p.add_argument('-clim',help='data value limits',type=float,nargs=2)
     p = p.parse_args()
 
-    pp = {'tlim':p.tlim,'flim':p.flim,'yminmax':p.yminmax,'showmap':not p.nomap}
+    pp = {'tlim':p.tlim,'flim':p.flim,'yminmax':p.yminmax,'clim':p.clim,
+          'showmap':not p.nomap}
 
     fn = Path(p.fn).expanduser()
 

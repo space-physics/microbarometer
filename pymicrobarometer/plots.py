@@ -71,7 +71,7 @@ def plotmap(showmap:bool):
             am.annotate(c[2], xy = (c[0], c[1]), xytext = (3, 3), textcoords = 'offset points')
 
 
-def plotspecgram(dat, fs:int, flim:tuple):
+def plotspecgram(dat, fs:int, flim:tuple, clim:tuple):
     fg = figure()
     ax = fg.gca()
     if 0:
@@ -91,9 +91,11 @@ def plotspecgram(dat, fs:int, flim:tuple):
 
     fg.colorbar(h, ax=ax).set_label('dB [V$^2$/Hz]')
     ax.set_ylabel('Frequency [Hz]')
-    ax.set_title(f'station {dat.meta.network}-{dat.meta.station}, $f_s$ = {fs} Hz, window Ns={Nperseg}')
+    ax.set_title(f'Barometric Pressure Spectrum \n station {dat.meta.network}-{dat.meta.station}, $f_s$ = {fs} Hz, window Ns={Nperseg}')
     if flim is not None:
         ax.set_ylim(flim)
+    if clim is not None:
+        h.set_clim(clim)
 
     fmt, xtxt = timelbl(t)
 
@@ -115,6 +117,6 @@ def plotmicrobarom(dat, pp, decimate:int=None):
         plotraw(dat, fs, pp['yminmax'])
 # %% spectrogram
     if 1:
-        plotspecgram(dat,  fs, pp['flim'])
+        plotspecgram(dat,  fs, pp['flim'], pp['clim'])
 # %% Map
     plotmap(pp['showmap'])
