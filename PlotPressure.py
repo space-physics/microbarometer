@@ -3,12 +3,13 @@
 1. .seed to .mseed: ./rdseed.rh6.linux_64 -f ~/data/microbarom/524602.seed -d -o 4
 2. read and plot:
 
-    python PlotPressure.py ~/data/microbarom/524602.mseed -downsample 10 -yminmax 9e5 1.1e6
+    python PlotPressure.py ~/data/microbarom/524602.mseed -decimate 10 -yminmax 9e5 1.1e6
     python PlotPressure.py ~/data/microbarom/768852.mseed -i 1 -yminmax 2.525e6 2.65e6
 
 """
 from pathlib import Path
-from matplotlib.pyplot import figure, show
+import scipy.signal
+from matplotlib.pyplot import figure, show, colorbar
 import matplotlib.dates as md
 import cartopy
 from datetime import timedelta
@@ -17,6 +18,8 @@ import seaborn as sns
 import pymicrobarometer as pmb
 
 GREF = cartopy.crs.PlateCarree()
+
+Nfft = 512
 
 # ./rdseed myfile.seed -s
 loc = {'TA-BGNE-BDO':(-98.150200, 41.408298, 573.000000, 'Belgrade, Nebraska'),  # fs= 40 Hz
@@ -38,12 +41,14 @@ def plotmicrobarom(dat, showmap:bool, yminmax:tuple=None, decimate:int=None):
 
     t = pmb.t2dt(dat)
 
-    fg = figure()
+    fs = dat.meta.sampling_rate
+
+    fg = figure(figsize=(12,8))
     ax = fg.gca()
 
     ax.plot(t, dat)
     ax.set_ylabel('int32 data numbers')
-    ax.set_title(f'station {dat.meta.network}-{dat.meta.station}, $f_s$ = {dat.meta.sampling_rate} Hz')
+    ax.set_title(f'station {dat.meta.network}-{dat.meta.station}, $f_s$ = {fs} Hz')
     ax.grid(True)
     ax.set_ylim(yminmax)
 
@@ -58,6 +63,21 @@ def plotmicrobarom(dat, showmap:bool, yminmax:tuple=None, decimate:int=None):
     if fmt is not None:
         ax.xaxis.set_major_formatter(fmt)
     fg.autofmt_xdate()
+# %% spectrogram
+    fg = figure()
+    ax = fg.gca()
+    ax.specgram(dat, Fs=fs)
+#    f,t,Sxx = scipy.signal.spectrogram(dat,
+#                                     fs=fs,
+#                                     nfft= Nfft,
+#                                     nperseg= Nfft,
+#                                     noverlap= None,
+#                                     return_onesided=True) # [V**2/Hz]
+
+    #fg.colorbar(ax=ax)
+    ax.set_ylabel('Frequency [Hz]')
+    ax.set_xlabel('Time [sec]')
+
 # %% Map
     if showmap:
         am = figure(figsize=(15,10)).gca(projection=GREF)
@@ -82,7 +102,7 @@ if __name__ == '__main__':
     p.add_argument('-i','--ind',help='index of datastream',type=int,default=0)
     p.add_argument('-ext',help='file suffix of data',default='.SAC')
     p.add_argument('-nomap',help='do not show map',action='store_true')
-    p.add_argument('-downsample',help='downsample factor',type=int)
+    p.add_argument('-decimate',help='downsample factor',type=int)
     p.add_argument('-yminmax',help='vertical plot limits',nargs=2, type=float)
     p = p.parse_args()
 
@@ -108,6 +128,6 @@ if __name__ == '__main__':
     #print(dat[0].stats)
     print(f'shape of data in {f}',dat[p.ind].count(),'from',dat[p.ind].meta.starttime,'to',dat[0].meta.endtime)
 
-    plotmicrobarom(dat[p.ind], not p.nomap, yminmax=p.yminmax, decimate=p.downsample)
+    plotmicrobarom(dat[p.ind], not p.nomap, yminmax=p.yminmax, decimate=p.decimate)
 
     show()
