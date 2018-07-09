@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import obspy
 import pandas
 
+
 def t2dt(dat):
     """convert SEED time to Python datetime"""
     step = timedelta(seconds=1/dat.meta.sampling_rate)
@@ -11,7 +12,7 @@ def t2dt(dat):
     return t
 
 
-def datetimerange(start:datetime, end:datetime, step:timedelta) -> list:
+def datetimerange(start: datetime, end: datetime, step: timedelta) -> list:
     """like range() for datetime!"""
     assert isinstance(start, datetime)
     assert isinstance(end, datetime)
@@ -20,14 +21,14 @@ def datetimerange(start:datetime, end:datetime, step:timedelta) -> list:
     return [start + i*step for i in range((end-start) // step)]
 
 
-def readasc(fn:Path, Nrows:int=1000):
+def readasc(fn: Path, Nrows: int=1000) -> pandas.DataFrame:
     """Use Pandas to load 100s of MB SAC_ASC text data."""
     dat = pandas.read_csv(fn, sep='\s+', nrows=Nrows, skiprows=30)
 
     return dat
 
 
-def readseed(fn:Path, tlim:tuple=None):
+def readseed(fn: Path, tlim: tuple=None):
     """read mSEED format microbarometer data
 
     fn: path to mSEED data
