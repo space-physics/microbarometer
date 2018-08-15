@@ -1,6 +1,6 @@
-from pathlib import Path
 from datetime import datetime, timedelta
-from .io import load
+from .io import load  # noqa: F401
+
 
 def t2dt(dat):
     """convert SEED time to Python datetime"""
@@ -17,6 +17,3 @@ def datetimerange(start: datetime, end: datetime, step: timedelta) -> list:
     assert isinstance(step, timedelta)
 
     return [start + i*step for i in range((end-start) // step)]
-
-
-

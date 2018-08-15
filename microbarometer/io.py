@@ -17,9 +17,9 @@ def load(fn: Path, tlim: Tuple[datetime, datetime]=None) -> np.ndarray:
         dat = readseed(fn, tlim=tlim)
     else:
         raise ValueError(f'unknown format file: {fn}')
-        
+
     return dat
-    
+
 
 def readasc(fn: Path, Nrows: int) -> pandas.DataFrame:
     """Use Pandas to load 100s of MB SAC_ASC text data."""
