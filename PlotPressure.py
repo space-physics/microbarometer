@@ -12,8 +12,8 @@ from matplotlib.pyplot import show
 import obspy
 import seaborn as sns  # noqa: F401
 from argparse import ArgumentParser
-import pymicrobarometer as pmb
-import pymicrobarometer.plots as plots
+import microbarometer as pmb
+import microbarometer.plots as plots
 
 # ./rdseed myfile.seed -s
 
@@ -39,10 +39,7 @@ def main():
     if p.tlim:
         tlim = (obspy.UTCDateTime(p.tlim[0]), obspy.UTCDateTime(p.tlim[1]))
 
-    if fn.suffix.endswith('ASC'):
-        dat = pmb.readasc(fn)
-    elif fn.suffix in ('.SAC', '.seed', '.mseed'):
-        dat = pmb.readseed(fn, tlim=tlim)
+    dat = pmb.load(fn, tlim=tlim)
 
     print(dat)
     # print(dat[0].stats)
