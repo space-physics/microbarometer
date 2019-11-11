@@ -1,6 +1,5 @@
-[![Build Status](https://travis-ci.com/scivision/microbarometer.svg?branch=master)](https://travis-ci.com/scivision/microbarometer)
-[![Coverage Status](https://coveralls.io/repos/github/scivision/microbarometer/badge.svg?branch=master)](https://coveralls.io/github/scivision/microbarometer?branch=master)
-[![Build status](https://ci.appveyor.com/api/projects/status/rw1e6a967kg499eu?svg=true)](https://ci.appveyor.com/project/scivision/microbarometer)
+[![Actions Status](https://github.com/space-physics/microbarometer/workflows/ci/badge.svg)](https://github.com/space-physics/microbarometer/actions)
+
 
 # Microbarometer read/plot from Python
 

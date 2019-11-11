@@ -31,8 +31,7 @@ def main():
     p.add_argument('-clim', help='data value limits', type=float, nargs=2)
     p = p.parse_args()
 
-    pp = {'tlim': p.tlim, 'flim': p.flim, 'yminmax': p.yminmax, 'clim': p.clim,
-          'showmap': not p.nomap}
+    pp = {'tlim': p.tlim, 'flim': p.flim, 'yminmax': p.yminmax, 'clim': p.clim, 'showmap': not p.nomap}
 
     fn = Path(p.fn).expanduser()
 
@@ -43,8 +42,7 @@ def main():
 
     print(dat)
     # print(dat[0].stats)
-    print(f'shape of data in {fn}', dat[p.ind].count(), 'from',
-          dat[p.ind].meta.starttime, 'to', dat[0].meta.endtime)
+    print(f'shape of data in {fn}', dat[p.ind].count(), 'from', dat[p.ind].meta.starttime, 'to', dat[0].meta.endtime)
 
     plots.plotmicrobarom(dat[p.ind], pp, decimate=p.decimate)
 

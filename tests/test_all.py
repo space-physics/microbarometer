@@ -5,7 +5,7 @@ import pytest
 from pytest import approx
 
 R = Path(__file__).parent
-ascfn = R/'sample.asc'
+ascfn = R / 'sample.asc'
 
 
 def test_load():

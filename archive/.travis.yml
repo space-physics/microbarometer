@@ -1,6 +1,4 @@
 language: python
-sudo: required
-dist: xenial
 group: travis_latest
 
 git:
@@ -17,13 +15,12 @@ os:
 install: pip install -e .[tests]
 
 script:
-- pytest -rsv
+- pytest
 - flake8
-- mypy . --ignore-missing-imports
+- mypy .
 
 after_success:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
   pytest --cov --cov-config=setup.cfg;
   coveralls;
   fi
-

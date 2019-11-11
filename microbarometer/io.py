@@ -3,13 +3,14 @@ import pandas
 import numpy as np
 from typing import Tuple
 from datetime import datetime
+
 try:
     import obspy
 except ImportError:
     obspy = None
 
 
-def load(fn: Path, tlim: Tuple[datetime, datetime]=None) -> np.ndarray:
+def load(fn: Path, tlim: Tuple[datetime, datetime] = None) -> np.ndarray:
 
     if fn.suffix.lower().endswith('asc'):
         dat = readasc(fn, 1000)
@@ -23,12 +24,12 @@ def load(fn: Path, tlim: Tuple[datetime, datetime]=None) -> np.ndarray:
 
 def readasc(fn: Path, Nrows: int) -> pandas.DataFrame:
     """Use Pandas to load 100s of MB SAC_ASC text data."""
-    dat = pandas.read_csv(fn, sep='\s+', nrows=Nrows, skiprows=30)
+    dat = pandas.read_csv(fn, sep=r'\s+', nrows=Nrows, skiprows=30)
 
     return dat
 
 
-def readseed(fn: Path, tlim: Tuple[datetime, datetime]=None):
+def readseed(fn: Path, tlim: Tuple[datetime, datetime] = None):
     """read mSEED format microbarometer data
 
     fn: path to mSEED data
