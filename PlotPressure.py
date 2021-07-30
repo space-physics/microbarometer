@@ -20,18 +20,18 @@ import microbarometer.plots as plots
 
 def main():
     p = ArgumentParser()
-    p.add_argument('fn', help='SEED data filename')
-    p.add_argument('-i', '--ind', help='index of datastream', type=int, default=0)
-    p.add_argument('-ext', help='file suffix of data', default='.SAC')
-    p.add_argument('-nomap', help='do not show map', action='store_true')
-    p.add_argument('-decimate', help='downsample factor', type=int)
-    p.add_argument('-yminmax', help='vertical plot limits', nargs=2, type=float)
-    p.add_argument('-tlim', help='start and end time to load', nargs=2)
-    p.add_argument('-flim', help='spectrogram freq plot limits', type=float, nargs=2)
-    p.add_argument('-clim', help='data value limits', type=float, nargs=2)
+    p.add_argument("fn", help="SEED data filename")
+    p.add_argument("-i", "--ind", help="index of datastream", type=int, default=0)
+    p.add_argument("-ext", help="file suffix of data", default=".SAC")
+    p.add_argument("-nomap", help="do not show map", action="store_true")
+    p.add_argument("-decimate", help="downsample factor", type=int)
+    p.add_argument("-yminmax", help="vertical plot limits", nargs=2, type=float)
+    p.add_argument("-tlim", help="start and end time to load", nargs=2)
+    p.add_argument("-flim", help="spectrogram freq plot limits", type=float, nargs=2)
+    p.add_argument("-clim", help="data value limits", type=float, nargs=2)
     p = p.parse_args()
 
-    pp = {'tlim': p.tlim, 'flim': p.flim, 'yminmax': p.yminmax, 'clim': p.clim, 'showmap': not p.nomap}
+    pp = {"tlim": p.tlim, "flim": p.flim, "yminmax": p.yminmax, "clim": p.clim, "showmap": not p.nomap}
 
     fn = Path(p.fn).expanduser()
 
@@ -42,12 +42,12 @@ def main():
 
     print(dat)
     # print(dat[0].stats)
-    print(f'shape of data in {fn}', dat[p.ind].count(), 'from', dat[p.ind].meta.starttime, 'to', dat[0].meta.endtime)
+    print(f"shape of data in {fn}", dat[p.ind].count(), "from", dat[p.ind].meta.starttime, "to", dat[0].meta.endtime)
 
     plots.plotmicrobarom(dat[p.ind], pp, decimate=p.decimate)
 
     show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
